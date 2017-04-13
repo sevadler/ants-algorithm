@@ -1,4 +1,3 @@
-//test comment
 package main;
 
 import java.awt.Color;
@@ -88,7 +87,10 @@ public class Update implements Runnable{
                         	c = Color.getHSBColor(1.20F, 1.00F, (float)(pct_nest/100));
                         	pct_nest = 70;
                         	break;
+                        case NOTHING:
+                        	c = Color.WHITE;
                         default:
+                        	break;
                         	
                     }
                     int rgb = c.getRGB();

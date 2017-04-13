@@ -89,7 +89,7 @@ public class IValue {
     
     private void assimilate() {
     	
-    	while((this.d >= 10.0) || (this.d <= -10.0) || ((this.d < 1.0) && (this.d > -1.0))) {
+    	while((this.d >= 10.0) || (this.d <= -10.0) || ((this.d < 1.0) && (this.d > -1.0)) && this.d != 0.0) {
     		
     		if(this.i == Integer.MAX_VALUE || this.i == Integer.MIN_VALUE) {
     			break;

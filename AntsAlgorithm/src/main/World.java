@@ -55,8 +55,8 @@ public class World extends JFrame {
         button = new JButton(icon);
         add(button);
          
-        //Framesetting
-        setSize(l*5+10,h*5+10);
+        //Frame setting
+        setSize(l*5+40,h*5+60);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         this.field = new Patch[l][h];
