@@ -17,7 +17,8 @@ public class Main{
     public static final int FEED_Y2 = 109;
    
     public static void main(String[] args) {
-        world = new main.World(100, 100);
+    	Configuration.init();
+        world = new main.World(Configuration.WORLD_HEIGHT, Configuration.WORLD_LENGTH);
         world.initalize();
         Thread updating = new Thread(new Update());
         updating.start();

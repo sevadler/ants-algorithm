@@ -7,7 +7,7 @@ public class Spawner implements Runnable {
         
     @Override
     public void run() {
-        while(Main.world.list.size() < 1) {
+        while(Main.world.list.size() < Configuration.NUMBER_OF_ANTS) {
             Main.world.list.add(new main.ants.Ant(Main.world.getNest().x1, Main.world.getNest().y1, main.enums.Direction.parse((int)(Math.random() * 3))));
             try {
                 Thread.sleep(500L + (long) (Math.random() * 1500L));
