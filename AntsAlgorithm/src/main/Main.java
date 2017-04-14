@@ -16,8 +16,9 @@ public class Main{
     public static final int FEED_X2 = 30;
     public static final int FEED_Y2 = 109;
    
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
     	Configuration.init();
+    	Thread.sleep(500L);
         world = new main.World(Configuration.WORLD_HEIGHT, Configuration.WORLD_LENGTH);
         world.initalize();
         Thread updating = new Thread(new Update());

@@ -73,6 +73,7 @@ public class World extends JFrame {
         createWall(this.l-1,0,this.l-1,this.h-1);
         createWall(0,this.h-1,this.l-1,this.h-1);
         
+        this.interpretWallConfiguration(Configuration.WALLS);
         //test wall
         //createWall(0,101,150,101);
         //createWall(0,99,150,99);
@@ -128,6 +129,29 @@ public class World extends JFrame {
            } 
         }
     } 
+    
+    public void interpretWallConfiguration(String walls) {
+    	
+    	if(walls.equals("")) {
+    		return;
+    	}
+    	
+    	String[] parts = walls.split("-");
+    	int x1; int y1; int x2; int y2;
+    	
+    	for(String s : parts) {
+    		
+    		String[] coords = s.split(",");
+    		
+    		x1 = Integer.parseInt(coords[0]);
+    		y1 = Integer.parseInt(coords[1]);
+    		x2 = Integer.parseInt(coords[2]);
+    		y2 = Integer.parseInt(coords[3]);
+    		
+    		this.createWall(x1, y1, x2, y2);
+    	}
+    	
+    }
    
     public void createNest(int x1, int y1){
         this.nest= new Nest(x1, y1, x1, y1);

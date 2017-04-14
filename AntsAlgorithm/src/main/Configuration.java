@@ -13,7 +13,8 @@ public class Configuration {
 	public static int WORLD_HEIGHT;
 	public static int WORLD_LENGTH;
 	public static int NUMBER_OF_ANTS;
-
+	
+	public static String WALLS;
 	
 	public static void init() {
 		
@@ -23,12 +24,7 @@ public class Configuration {
 		try {
 			
 			input = new FileInputStream("ants.properties");
-			prop.load(input);
 			
-			Configuration.WORLD_HEIGHT = Integer.parseInt(prop.getProperty("WORLD_HEIGHT"));
-			Configuration.WORLD_LENGTH = Integer.parseInt(prop.getProperty("WORLD_LENGTH"));
-			Configuration.NUMBER_OF_ANTS = Integer.parseInt(prop.getProperty("NUMBER_OF_ANTS"));
-
 		} catch (FileNotFoundException e) {
 			
 			OutputStream output = null;
@@ -41,10 +37,12 @@ public class Configuration {
 				prop.setProperty("WORLD_LENGTH", "200");
 				prop.setProperty("NUMBER_OF_ANTS", "10");
 				
+				prop.setProperty("WALLS", "");
+				
 				prop.store(output, null);
-			
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
+				
+				input = new FileInputStream("ants.properties");
+				
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			} finally {
@@ -57,24 +55,32 @@ public class Configuration {
 					}
 				}
 			}
-
-		} catch (IOException ex) {
-			ex.printStackTrace();
+			
 		} finally {
 			
-			if (input != null) {
+			try {
 				
-				try {
-					
-					input.close();
-					
-				} catch (IOException e) {
-					e.printStackTrace();
+				prop.load(input);
+				
+				Configuration.WORLD_HEIGHT = Integer.parseInt(prop.getProperty("WORLD_HEIGHT"));
+				Configuration.WORLD_LENGTH = Integer.parseInt(prop.getProperty("WORLD_LENGTH"));
+				Configuration.NUMBER_OF_ANTS = Integer.parseInt(prop.getProperty("NUMBER_OF_ANTS"));
+				
+				Configuration.WALLS = prop.getProperty("WALLS");
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				
+				if (input != null) {
+					try {
+						input.close();
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}
 				}
 			}
-			
 		}
-		
 	}
 
 }
