@@ -1,9 +1,8 @@
 package main;
 
 import java.awt.Color;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-
+import main.datatype.IValue;
+import main.elements.Patch;
 import main.enums.Mode;
 
 public class Update implements Runnable{
@@ -17,13 +16,12 @@ public class Update implements Runnable{
 	private IValue pFeed;
 	private IValue pNest;
 	
-	private Color c_brown = new Color(198,130,12);
-	private Color c_yellow = new Color(247,247,43);
-	private Color c_purple = Color.BLACK; //new Color(198,12,185);
-	private Color c_red = new Color(198,12,18);
+	private final Color c_brown = new Color(198,130,12);
+	private final Color c_yellow = new Color(247,247,43);
+	private final Color c_purple = Color.BLACK; //new Color(198,12,185);
+	private final Color c_red = new Color(198,12,18);
+	public static Color cc = Color.LIGHT_GRAY;
 	
-	private final IValue LIMIT = new IValue(80 * Double.MAX_VALUE, Integer.MIN_VALUE + 2);
-
     @Override
     public void run(){
         while(true){
@@ -70,25 +68,42 @@ public class Update implements Runnable{
                             c = c_red;//rot
                             break;
                         case FEED_PHEROMON:
-                        	if(p.getNestIntensity().isHigher(LIMIT)) {
-                        		pct_feed = 100.00;
-                        	} else {
-                        		pct_feed += IValue.mult(p.getFeedIntensity(), (new IValue((100-pct_feed), 0).frac(LIMIT))).parseToDouble();
-                        	}
+                        	p.getFeedIntensity().assimilate();
+                        	int i1 = p.getFeedIntensity().getInteger();
+                        	
+                        	if(i1 < 0) {
+                        		
+                        		i1 = -i1;
+                       			pct_feed += 15 + 15 * i1/Integer.MAX_VALUE;
+                       			
+                       		} else {
+                       			pct_feed += 15 * i1/Integer.MAX_VALUE;	
+                       		}
                         	c = Color.getHSBColor(1.80F, 1.00F, (float)(pct_feed/100));
                         	pct_feed = 70;
                         	break;
                         case NEST_PHEROMON:
-                        	if(p.getNestIntensity().isHigher(LIMIT)) {
-                        		pct_nest = 100.00;
-                        	} else {
-                        		pct_nest += IValue.mult(p.getNestIntensity(), (new IValue((100-pct_nest), 0).frac(LIMIT))).parseToDouble();
-                        	}
+                        	p.getNestIntensity().assimilate();
+                        	int i2 = p.getNestIntensity().getInteger();
+                        	
+                        	if(i2 < 0) {
+                        		
+                        		i2 = -i2;
+                       			pct_nest += 15 + 15 * i2/Integer.MAX_VALUE;
+                       			
+                       		} else {
+                       			pct_nest += 15 * i2/Integer.MAX_VALUE;	
+                       		}
+                       		        	
                         	c = Color.getHSBColor(1.20F, 1.00F, (float)(pct_nest/100));
                         	pct_nest = 70;
                         	break;
+                        case MARKER:
+                        	c = Color.BLUE;
+                        	break;
                         case NOTHING:
-                        	c = Color.WHITE;
+                        	c = cc;
+                        	break;
                         default:
                         	break;
                         	
@@ -102,9 +117,9 @@ public class Update implements Runnable{
                     }                             
                 }
             }
-            Main.world.icon = new ImageIcon(Main.world.img);
-            Main.world.button = new JButton(Main.world.icon);
-            Main.world.add(Main.world.button);
+
+            Main.world.add(Main.world.panel);
+            Main.world.panel.repaint();
             Main.world.validate();
         }
     

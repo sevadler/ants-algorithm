@@ -3,7 +3,7 @@ package main.ants;
 import java.util.HashSet;
 import java.util.Random;
 
-import main.IValue;
+import main.datatype.IValue;
 import main.enums.Direction;
 import main.enums.Mode;
 

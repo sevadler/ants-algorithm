@@ -1,5 +1,6 @@
-package main;
+package main.elements;
 
+import main.datatype.IValue;
 import main.enums.Mode;
 
 public class Patch {
@@ -10,6 +11,7 @@ public class Patch {
     private Integer feed;
     private Boolean nest;
     private Integer ant;
+    private Boolean marker;
     
     public Patch(){
         this.pFeed = new IValue(0.0, 0);  
@@ -18,6 +20,7 @@ public class Patch {
         this.nest = false;  
         this.pNest = new IValue(0.0, 0);   
         this.ant = 0; 
+        this.marker = false;
     }
     
     public void addAnt() {
@@ -79,9 +82,19 @@ public class Patch {
         return this.ant > 0;
     }
     
+    public void setMarker() {
+    	this.marker = true;
+    }
+    
+    public void removeMarker() {
+    	this.marker = false;
+    }
+    
     public main.enums.Mode getMode() {
         if(this.ant > 0) {
             return Mode.ANT;
+        } else if(this.marker) {
+           	return Mode.MARKER;
         } else if(this.wall) {
             return Mode.WALL;
         } else if(this.nest) {
@@ -91,7 +104,7 @@ public class Patch {
         } else if(this.pFeed.isHigher(new IValue(0.0, 0))) {
             return Mode.FEED_PHEROMON;
         } else if(this.pNest.isHigher(new IValue(0.0, 0))) {
-            return Mode.NEST_PHEROMON;
+            return Mode.NEST_PHEROMON;   
         } else {
             return Mode.NOTHING;
         }

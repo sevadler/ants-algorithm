@@ -1,4 +1,4 @@
-package main;
+package main.datatype;
 
 public class IValue {
     
@@ -87,7 +87,7 @@ public class IValue {
     	return this;
     }
     
-    private void assimilate() {
+    public void assimilate() {
     	
     	while((this.d >= 10.0) || (this.d <= -10.0) || ((this.d < 1.0) && (this.d > -1.0)) && this.d != 0.0) {
     		
@@ -99,8 +99,13 @@ public class IValue {
     			this.d /= 10;
     			this.i--;
     		} else {
-    			this.d *= 10;
-    			this.i++;
+    			if(this.i < 0) {
+    				this.d *= 10;
+    				this.i--;
+    			} else {
+    				this.d *= 10;
+    				this.i++;
+    			}
     		}
     	}
     }
@@ -148,8 +153,10 @@ public class IValue {
     	return this.d; 
     }
     
-    public static IValue div(IValue iv, int x) {  
+    public static IValue div(IValue ix, int x) {  
         
+    	IValue iv = new IValue(ix.getDouble(), ix.getInteger());
+    	
     	iv.d = iv.d/x;
         
         if(iv.d < 1) {
@@ -159,7 +166,11 @@ public class IValue {
         return iv;
     }
     
-    public static IValue add(IValue v1, IValue v2) {
+    public static IValue add(IValue ix1, IValue ix2) {
+    	
+    	IValue v1 = new IValue(ix1.getDouble(), ix1.getInteger());
+    	IValue v2 = new IValue(ix2.getDouble(), ix2.getInteger());
+    	
     	IValue max;
     	IValue min;
     	
@@ -182,7 +193,11 @@ public class IValue {
     	return v1;
     }
     
-    public static IValue sub(IValue v1, IValue v2){
+    public static IValue sub(IValue ix1, IValue ix2){
+    	
+    	IValue v1 = new IValue(ix1.getDouble(), ix1.getInteger());
+    	IValue v2 = new IValue(ix2.getDouble(), ix2.getInteger());
+
     	
     	int dif = Math.abs(v1.i-v2.i);
     	
@@ -207,7 +222,10 @@ public class IValue {
     	return v1;
     }
     
-    public static IValue mult(IValue v1, IValue v2) {
+    public static IValue mult(IValue ix1, IValue ix2) {
+    	
+    	IValue v1 = new IValue(ix1.getDouble(), ix1.getInteger());
+    	IValue v2 = new IValue(ix2.getDouble(), ix2.getInteger());
     	
     	v1.i = v1.i + v2.i;
     	v1.d = v1.d * v2.d;
@@ -215,17 +233,30 @@ public class IValue {
     	return v1;
     }
     
-    private static IValue assimilate(IValue v) {
-    	if(v.i == 0) {
-    		return v;
-    	}
-    	
-    	while(v.d >= 10) {
-    		v.d/=10;
-    		v.i--;
+    public static IValue assimilate(IValue v) {
+
+    	while((v.d >= 10.0) || (v.d <= -10.0) || ((v.d < 1.0) && (v.d > -1.0)) && v.d != 0.0) {
+    		
+    		if(v.i == Integer.MAX_VALUE || v.i == Integer.MIN_VALUE) {
+    			break;
+    		}
+    		
+    		if(v.d >= 10.0 || v.d <= -10.0) {
+    			v.d /= 10;
+    			v.i--;
+    		} else {
+    			v.d *= 10;
+    			v.i++;
+    		}
     	}
     	
     	return v;
+    }
+    
+    public String toString() {
+    	
+    	return this.d + "/" + this.i;
+    	
     }
 
 }

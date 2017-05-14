@@ -3,15 +3,28 @@ package main;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
 import main.ants.Ant;
+import main.elements.Feed;
+import main.elements.Nest;
+import main.elements.Patch;
 import main.enums.Mode;
+import main.misc.Configuration;
+import main.misc.ImagePanel;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.ColorModel;
 import java.awt.Color;
-
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class World extends JFrame {
     
@@ -26,12 +39,21 @@ public class World extends JFrame {
     
     public List<Ant> list = new ArrayList<Ant>();
     
-    BufferedImage img;
-    WritableRaster raster;
-    ColorModel model;
-    Icon icon;
-    JButton button;
-  
+    public BufferedImage img;
+    protected WritableRaster raster;
+    protected ColorModel model;
+    protected Icon icon;
+    protected JButton button;
+    protected ImagePanel panel;
+    
+    public boolean enabled = false;
+    private boolean inst = false;
+    
+    private int wx1;
+    private int wy1;
+    private int wx2;
+    private int wy2;
+    
     public World(int l, int h){
         
         this.h = h;
@@ -51,12 +73,97 @@ public class World extends JFrame {
             }
         }
         
-        icon = new ImageIcon(img);
-        button = new JButton(icon);
-        add(button);
-         
+        panel = new ImagePanel();
+        this.setFocusable(true);
+        //panel.setBounds(25, 25, l*5, h*5);
+        this.add(panel);
+        
+        this.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+
+				if(e.getKeyCode() == KeyEvent.VK_SPACE && Main.world.enabled == false && !inst) {
+					Main.world.enabled = true;
+					
+					Thread tNest = new Thread(new Spawner());
+			        tNest.start();
+			        
+			        Update.cc = Color.WHITE;
+					
+				} else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					System.exit(0);
+				}
+				
+			}
+
+			@Override
+			public void keyReleased(KeyEvent arg0) { }
+
+			@Override
+			public void keyTyped(KeyEvent arg0) { }
+        	
+        });
+        
+        panel.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				if(SwingUtilities.isLeftMouseButton(e)) {
+					
+					int x = e.getX() / 5;
+					int y = e.getY() / 5;
+					Patch p = field[x][y];
+					
+					System.out.println("Patch: X=" + x + " Y=" + y + " | NestIntensity=" + p.getNestIntensity().toString() + " | FeedIntensity=" + p.getFeedIntensity().toString() + " | Mode=" + p.getMode().toString());
+				}
+								
+				if(SwingUtilities.isRightMouseButton(e)) {
+					if(inst == false) {							
+						Main.world.wx1 = e.getX() / 5;
+						Main.world.wy1 = e.getY() / 5;
+						Main.world.field[Main.world.wx1][Main.world.wy1].setMarker();							inst = true;
+						
+					} else {
+						
+						Main.world.wx2 = e.getX() / 5;
+						Main.world.wy2 = e.getY() / 5;
+						Main.world.field[Main.world.wx2][Main.world.wy2].setMarker();
+						inst = false;
+						
+						try {
+							Thread.sleep(200L);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+							
+						Main.world.createWall(Main.world.wx1, Main.world.wy1, Main.world.wx2, Main.world.wy2);
+							
+						Main.world.field[Main.world.wx1][Main.world.wy1].removeMarker();
+						Main.world.field[Main.world.wx2][Main.world.wy2].removeMarker();
+							
+					}
+				}
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) { }
+
+			@Override
+			public void mouseExited(MouseEvent arg0) { }
+
+			@Override
+			public void mousePressed(MouseEvent arg0) { }
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) { }
+        	
+        });
+                 
         //Frame setting
-        setSize(l*5+40,h*5+60);
+        getContentPane().setPreferredSize(new Dimension(l*5,h*5));
+        pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         this.field = new Patch[l][h];
@@ -79,16 +186,14 @@ public class World extends JFrame {
         //createWall(0,99,150,99);
        // createWall(0,110,150,110);
         //createWall(0,90,150,90);
-        
-        createNest(Main.NEST_X, Main.NEST_Y);
-        //createFeed(Main.FEED_X1, Main.FEED_Y1, Main.FEED_X2, Main.FEED_Y2);
-        Thread tNest = new Thread(new Spawner());
-        tNest.start();
+
+        this.interpretFeedConfiguration(Configuration.FEED);
+        this.interpretNestConfiguration(Configuration.NEST);
 
     }
     
         
-    protected void createObject(int x1, int y1, int x2, int y2, Mode m){
+    public void createObject(int x1, int y1, int x2, int y2, Mode m){
         
         int xLinks;
         int xRechts;
@@ -130,7 +235,7 @@ public class World extends JFrame {
         }
     } 
     
-    public void interpretWallConfiguration(String walls) {
+    private void interpretWallConfiguration(String walls) {
     	
     	if(walls.equals("")) {
     		return;
@@ -150,6 +255,32 @@ public class World extends JFrame {
     		
     		this.createWall(x1, y1, x2, y2);
     	}
+    	
+    }
+    
+    private void interpretNestConfiguration(String nest) {
+    	
+    	if(nest.equals("")) {
+    		System.out.println("ERROR: Missing nest configuration!");
+    		System.exit(0);
+    	}
+    	
+    	String[] parts = nest.split(",");
+    	
+    	this.createNest(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    	
+    }
+    
+    private void interpretFeedConfiguration(String feed) {
+    	
+    	if(feed.equals("")) {
+    		System.out.println("ERROR: Missing feed configuration!");
+    		System.exit(0);
+    	}
+    	
+    	String[] parts = feed.split(",");
+    	
+    	this.createFeed(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
     	
     }
    

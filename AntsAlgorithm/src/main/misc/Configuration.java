@@ -1,4 +1,4 @@
-package main;
+package main.misc;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,6 +13,9 @@ public class Configuration {
 	public static int WORLD_HEIGHT;
 	public static int WORLD_LENGTH;
 	public static int NUMBER_OF_ANTS;
+	
+	public static String NEST;
+	public static String FEED;
 	
 	public static String WALLS;
 	
@@ -36,6 +39,9 @@ public class Configuration {
 				prop.setProperty("WORLD_HEIGHT", "200");
 				prop.setProperty("WORLD_LENGTH", "200");
 				prop.setProperty("NUMBER_OF_ANTS", "10");
+				
+				prop.setProperty("NEST", "20,20");
+				prop.setProperty("FEED", "80,80,82,82");
 				
 				prop.setProperty("WALLS", "");
 				
@@ -65,6 +71,9 @@ public class Configuration {
 				Configuration.WORLD_HEIGHT = Integer.parseInt(prop.getProperty("WORLD_HEIGHT"));
 				Configuration.WORLD_LENGTH = Integer.parseInt(prop.getProperty("WORLD_LENGTH"));
 				Configuration.NUMBER_OF_ANTS = Integer.parseInt(prop.getProperty("NUMBER_OF_ANTS"));
+				
+				Configuration.NEST = prop.getProperty("NEST");
+				Configuration.FEED = prop.getProperty("FEED");
 				
 				Configuration.WALLS = prop.getProperty("WALLS");
 				

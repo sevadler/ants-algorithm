@@ -3,6 +3,8 @@ package main;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import main.misc.Configuration;
+
 public class Spawner implements Runnable {
         
     @Override
