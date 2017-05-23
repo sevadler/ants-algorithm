@@ -10,23 +10,23 @@ public class IValue {
         this.i = i;
     }
     
-    // exception x < 1
+    // exception x < 1 or d < 0
     public IValue div(double x) {  
         
     	this.d = d/x;
-        
-        if(d < 1) {
+        while(d < 1 && d > 0) {
             this.d *= 10;
             i++;
         }
         return this;
     }
     
+    //works with negative integers?
     public IValue add(IValue v) {
     	IValue max;
     	IValue min;
     	
-    	if(this.i >= v.i){
+    	if(this.i >= v.i) {
     		max = this;
     		min = v;
     	}else{
@@ -34,10 +34,25 @@ public class IValue {
     		min = this;
     	}
     	
+    	/* alternative?
+    	if(this.isHigher(v)){
+    		max = this;
+    		min = v;
+    	}else{
+    		max = v;
+    		min = this;
+    	}*/
+    	
     	int dif = max.i - min.i;
     	
-    	for(int i = 0; i < dif; i++){
-    		max.d /= 10;
+    	if(max.i > 0) {
+    	   	for(int i = 0; i < dif; i++) {
+	    	max.d /= 10;
+    	   	}
+    	} else {
+    		for(int i = 0; i > dif; i--) {
+    	    	max.i *= 10;
+        	   	}
     	}
     	this.d = max.d + min.d;
     	this.i = min.i;
@@ -153,13 +168,13 @@ public class IValue {
     	return this.d; 
     }
     
+    //exception x < 1 or d < 0
     public static IValue div(IValue ix, int x) {  
         
     	IValue iv = new IValue(ix.getDouble(), ix.getInteger());
     	
     	iv.d = iv.d/x;
-        
-        if(iv.d < 1) {
+        while(iv.d < 1 && iv.d > 0.0) {
             iv.d *= 10;
             iv.i++;
         }
