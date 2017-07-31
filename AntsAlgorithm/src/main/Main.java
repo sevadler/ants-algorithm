@@ -1,4 +1,5 @@
-//testcomment#2
+//walls 1,49,99,49-1,51,99,51
+
 package main;
 
 import main.misc.Configuration;

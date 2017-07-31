@@ -110,9 +110,9 @@ public class Update implements Runnable{
                     }
                     int rgb = c.getRGB();
                     Object data = Main.world.model.getDataElements(rgb, null);
-                    for(int i=0; i<5; i++){
-                        for(int j=0; j<5; j++){
-                            Main.world.raster.setDataElements(x*5+i,y*5+j,data);
+                    for(int i = 0; i < Main.world.patchSize; i++){
+                        for(int j = 0; j < Main.world.patchSize; j++){
+                            Main.world.raster.setDataElements(x * Main.world.patchSize + i, y * Main.world.patchSize + j, data);
                         }
                     }                             
                 }

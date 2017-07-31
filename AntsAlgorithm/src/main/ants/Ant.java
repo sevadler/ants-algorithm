@@ -1,5 +1,4 @@
-//ACHTUNG: NORTH und SOUTH vertauscht! Muss evtl an anderen Stellen angepasst werden
-
+//Testcomment
 package main.ants;
 
 import main.Main;
@@ -25,10 +24,13 @@ public class Ant {
         this.direction = d;
         this.intensity = new IValue(Double.MAX_VALUE, 0);
         this.moves = 0;
+        this.intensity.assimilate();
+        this.handleIntensity(Mode.NEST);
         new Thread(new Movement(this)).start();
     }
     
     protected void move(Direction d) {
+    	this.intensity.assimilate();
         boolean success = false;
         //System.out.println(d.toString());
         switch(d) {
@@ -37,10 +39,6 @@ public class Ant {
                     field[posx][posy].removeAnt();
                     this.posy++;
                     success = true;
-                    
-                    //this.intensity=1000*Math.exp((this.moves/100)*Math.log(0.99));
-                    this.intensity.div(3);
-                    this.intensity.assimilate();
                 }
                 break;
             case EAST:
@@ -48,9 +46,6 @@ public class Ant {
                     field[posx][posy].removeAnt();
                     this.posx++;
                     success = true;
-                    
-                    this.intensity.div(3);
-                    this.intensity.assimilate();
                 }
                 break;
             case NORTH:
@@ -58,9 +53,6 @@ public class Ant {
                     field[posx][posy].removeAnt();
                     this.posy--;
                     success = true;
-                    
-                    this.intensity.div(3);
-                    this.intensity.assimilate();
                 }
                 break;
             case WEST:
@@ -68,14 +60,14 @@ public class Ant {
                     field[posx][posy].removeAnt();
                     this.posx--;
                     success = true;
-                    
-                    this.intensity.div(3);
-                    this.intensity.assimilate();
                 }
                 break;
         }
         
         if(success) {
+        	this.intensity.div(4);
+            this.intensity.assimilate();
+            
             this.direction = d;
             field[posx][posy].addAnt();
             this.moves++;
@@ -89,32 +81,27 @@ public class Ant {
         } else {
             this.handleIntensity(Mode.NEST);
         }
+        System.out.print("");
     }
     
     private void handleIntensity(Mode m) {
         switch(m) {
             case FEED:
                 field[posx][posy].setFeedIntensity(field[posx][posy].getFeedIntensity().add(intensity)); 
-                if(!field[posx+1][posy].isWall()) { field[posx+1][posy].setFeedIntensity(field[posx+1][posy].getFeedIntensity().add(IValue.div(intensity, 2))); }
-                if(!field[posx-1][posy].isWall()) { field[posx-1][posy].setFeedIntensity(field[posx-1][posy].getFeedIntensity().add(IValue.div(intensity, 2))); }
-                if(!field[posx][posy+1].isWall()) { field[posx][posy+1].setFeedIntensity(field[posx][posy+1].getFeedIntensity().add(IValue.div(intensity, 2))); }
-                if(!field[posx][posy-1].isWall()) { field[posx][posy-1].setFeedIntensity(field[posx][posy-1].getFeedIntensity().add(IValue.div(intensity, 2))); }
+                if(!field[posx+1][posy].isWall()) { field[posx+1][posy].setFeedIntensity(field[posx+1][posy].getFeedIntensity().add(IValue.div(intensity, 20))); }
+                if(!field[posx-1][posy].isWall()) { field[posx-1][posy].setFeedIntensity(field[posx-1][posy].getFeedIntensity().add(IValue.div(intensity, 20))); }
+                if(!field[posx][posy+1].isWall()) { field[posx][posy+1].setFeedIntensity(field[posx][posy+1].getFeedIntensity().add(IValue.div(intensity, 20))); }
+                if(!field[posx][posy-1].isWall()) { field[posx][posy-1].setFeedIntensity(field[posx][posy-1].getFeedIntensity().add(IValue.div(intensity, 20))); }
+                break;
                 
-                /*field[posx+1][posy+1].setFeedIntensity(field[posx+1][posy].getFeedIntensity() + 0.5 * intensity);
-                field[posx-1][posy-1].setFeedIntensity(field[posx-1][posy].getFeedIntensity() + 0.5 * intensity);
-                field[posx-1][posy+1].setFeedIntensity(field[posx][posy+1].getFeedIntensity() + 0.5 * intensity);
-                field[posx+1][posy-1].setFeedIntensity(field[posx][posy-1].getFeedIntensity() + 0.5 * intensity);*/
             case NEST:
                 field[posx][posy].setNestIntensity(field[posx][posy].getNestIntensity().add(intensity));
-                if(!field[posx+1][posy].isWall()) { field[posx+1][posy].setNestIntensity(field[posx+1][posy].getNestIntensity().add(IValue.div(intensity, 2))); } 
-                if(!field[posx-1][posy].isWall()) { field[posx-1][posy].setNestIntensity(field[posx-1][posy].getNestIntensity().add(IValue.div(intensity, 2))); }
-                if(!field[posx][posy+1].isWall()) { field[posx][posy+1].setNestIntensity(field[posx][posy+1].getNestIntensity().add(IValue.div(intensity, 2))); }
-                if(!field[posx][posy-1].isWall()) { field[posx][posy-1].setNestIntensity(field[posx][posy-1].getNestIntensity().add(IValue.div(intensity, 2))); }
-                
-                /*field[posx+1][posy+1].setNestIntensity(field[posx+1][posy].getNestIntensity() + 0.5 * intensity);
-                field[posx-1][posy-1].setNestIntensity(field[posx-1][posy].getNestIntensity() + 0.5 * intensity);
-                field[posx-1][posy+1].setNestIntensity(field[posx][posy+1].getNestIntensity() + 0.5 * intensity);
-                field[posx+1][posy-1].setNestIntensity(field[posx][posy-1].getNestIntensity() + 0.5 * intensity);*/
+                if(!field[posx+1][posy].isWall()) { field[posx+1][posy].setNestIntensity(field[posx+1][posy].getNestIntensity().add(IValue.div(intensity, 20))); } 
+                if(!field[posx-1][posy].isWall()) { field[posx-1][posy].setNestIntensity(field[posx-1][posy].getNestIntensity().add(IValue.div(intensity, 20))); }
+                if(!field[posx][posy+1].isWall()) { field[posx][posy+1].setNestIntensity(field[posx][posy+1].getNestIntensity().add(IValue.div(intensity, 20))); }
+                if(!field[posx][posy-1].isWall()) { field[posx][posy-1].setNestIntensity(field[posx][posy-1].getNestIntensity().add(IValue.div(intensity, 20))); }
+                break;
+             
 		default:
 			break;
         }
@@ -151,7 +138,7 @@ public class Ant {
                 IValue a3 = field[this.posx-1][this.posy].getNestIntensity();
                 IValue a0 = field[this.posx][this.posy+1].getNestIntensity();
                 IValue a2 = field[this.posx][this.posy-1].getNestIntensity();
-                //Suche nach größtem Pheromonwert:
+                //search for biggest pheromon value
                 Direction aDir = Direction.EAST;
                 IValue a = a1;
                 if(a3.isHigher(a)) {
@@ -175,7 +162,7 @@ public class Ant {
             	IValue b3 = field[this.posx-1][this.posy].getFeedIntensity();
             	IValue b0 = field[this.posx][this.posy+1].getFeedIntensity();
             	IValue b2 = field[this.posx][this.posy-1].getFeedIntensity();
-                //Suche nach größtem Pheromonwert:
+                //search for biggest pheromon value:
                 Direction bDir = Direction.EAST;
                 IValue b = b1;
                 if(b3.isHigher(b)) {

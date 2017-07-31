@@ -30,7 +30,7 @@ public class Movement extends Thread {
             if(ant.back) {
             	if(ant.checkObject(Mode.NEST) != null) {
             		ant.move(ant.checkObject(Mode.NEST));
-            		ant.intensity = new IValue(Double.MAX_VALUE/2, 0);
+            		ant.intensity = new IValue(Double.MAX_VALUE, 0);
             		ant.back = false;
             		continue;
             	}
@@ -40,7 +40,7 @@ public class Movement extends Thread {
             	
             	if(ant.checkObject(Mode.FEED)!= null){
             		ant.move(ant.checkObject(Mode.FEED));
-            		ant.intensity = new IValue(Double.MAX_VALUE/2, 0);
+            		ant.intensity = new IValue(Double.MAX_VALUE, 0);
             		ant.back = true;
             		continue;
             	}
@@ -71,27 +71,29 @@ public class Movement extends Thread {
     		IValue i2 = ant.getNearIntensity(Direction.parse((ant.direction.ordinal() + 2) % 4), Mode.NEST_PHEROMON); 
     		IValue i3 = ant.getNearIntensity(Direction.parse((ant.direction.ordinal() + 3) % 4), Mode.NEST_PHEROMON); 
 
-    		IValue i_ = i0;
-    		int i__ = 0;
+    		IValue biggest = i0;
+    		int dirBiggest = 0;
+    		int counter = 0;
     		
     		IValue[] array = {i0,i1,i2,i3};
     		
     		for(int i = 0; i < array.length; i++) {
     			if(array[i].getDouble() == 0.0) {
-    				set.add(Direction.parse((ant.direction.ordinal() + i) % 4));
+    				counter++;
     			}
-    			if(array[i].isHigher(i_)) {
-    				i_ = array[i];
-    				i__ = i;
+    			if(array[i].isHigher(biggest)) {
+    				biggest = array[i];
+    				dirBiggest = i;
     			}
     		}
     		
-    		if(set.size() == 4) {
+    		if(counter == 4) {
     			randomMove(50,70,75);
-    			set.clear();
+    			counter = 0;
     			return;
     		}
     		
+    		counter = 0;
     		
 
     		/*double i = Math.floor(i0 + i1 + i2 + i3);
@@ -103,7 +105,7 @@ public class Movement extends Thread {
     		i += i*1.15;
     		set.clear();
     		randomMove((int) Math.floor((i0/i)*100), (int) Math.floor((i1/i)*100), (int) Math.floor((i2/i)*100));*/
-    		Direction d_ = Direction.parse((ant.direction.ordinal() + i__) % 4);
+    		Direction d_ = Direction.parse((ant.direction.ordinal() + dirBiggest) % 4);
     		ant.move(d_);
 
     	} else {        	

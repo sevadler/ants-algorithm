@@ -32,6 +32,8 @@ public class World extends JFrame {
 	private final int l;
     private final int h;
     
+    public final int patchSize = 8;
+    
     public Patch[][] field;
     
     private Nest nest;
@@ -59,7 +61,7 @@ public class World extends JFrame {
         this.h = h;
         this.l = l;
         
-        img = new BufferedImage(l*5, h*5, BufferedImage.TYPE_INT_ARGB);
+        img = new BufferedImage(l * patchSize, h * patchSize, BufferedImage.TYPE_INT_ARGB);
         raster = img.getRaster();
         model = img.getColorModel();
         Color c0 = Color.WHITE;
@@ -67,8 +69,8 @@ public class World extends JFrame {
         
         Object data0 = model.getDataElements(argb, null);
         
-        for (int i = 0; i < l*5; i++) {
-        	for (int j = 0; j < h*5; j++) {
+        for (int i = 0; i < l * patchSize; i++) {
+        	for (int j = 0; j < h * patchSize; j++) {
         		raster.setDataElements(i, j, data0);
             }
         }
@@ -112,8 +114,8 @@ public class World extends JFrame {
 
 				if(SwingUtilities.isLeftMouseButton(e)) {
 					
-					int x = e.getX() / 5;
-					int y = e.getY() / 5;
+					int x = e.getX() / patchSize;
+					int y = e.getY() / patchSize;
 					Patch p = field[x][y];
 					
 					System.out.println("Patch: X=" + x + " Y=" + y + " | NestIntensity=" + p.getNestIntensity().toString() + " | FeedIntensity=" + p.getFeedIntensity().toString() + " | Mode=" + p.getMode().toString());
@@ -121,14 +123,14 @@ public class World extends JFrame {
 								
 				if(SwingUtilities.isRightMouseButton(e)) {
 					if(inst == false) {							
-						Main.world.wx1 = e.getX() / 5;
-						Main.world.wy1 = e.getY() / 5;
+						Main.world.wx1 = e.getX() / patchSize;
+						Main.world.wy1 = e.getY() / patchSize;
 						Main.world.field[Main.world.wx1][Main.world.wy1].setMarker();							inst = true;
 						
 					} else {
 						
-						Main.world.wx2 = e.getX() / 5;
-						Main.world.wy2 = e.getY() / 5;
+						Main.world.wx2 = e.getX() / patchSize;
+						Main.world.wy2 = e.getY() / patchSize;
 						Main.world.field[Main.world.wx2][Main.world.wy2].setMarker();
 						inst = false;
 						
@@ -162,7 +164,7 @@ public class World extends JFrame {
         });
                  
         //Frame setting
-        getContentPane().setPreferredSize(new Dimension(l*5,h*5));
+        getContentPane().setPreferredSize(new Dimension(l * patchSize,h * patchSize));
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
