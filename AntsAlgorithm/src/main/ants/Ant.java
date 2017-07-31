@@ -1,4 +1,3 @@
-//Testcomment
 package main.ants;
 
 import main.Main;
@@ -15,6 +14,8 @@ public class Ant {
     protected boolean pheromon = false;
     protected Direction direction;
     protected int moves;
+    
+    public boolean suspended = false;
     
     private Patch[][] field = Main.world.field;
     

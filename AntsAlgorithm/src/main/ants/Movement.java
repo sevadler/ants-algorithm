@@ -1,16 +1,25 @@
 package main.ants;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Random;
 
+import main.Main;
 import main.datatype.IValue;
 import main.enums.Direction;
 import main.enums.Mode;
+import main.misc.Configuration;
 
 public class Movement extends Thread {
     
     private final Ant ant;
-    private final Random rnd;    
+    private final Random rnd;   
+    
+    public static PrintWriter bf = null;
     
     private HashSet<Direction> set = new HashSet<Direction>();
     
@@ -19,14 +28,28 @@ public class Movement extends Thread {
         rnd = new Random();
     }
     
-    @Override
+	@Override
     public void run() {
+    	
+    	File f = new File("C:\\Users\\Carina\\Desktop\\debug.txt");
+		try {
+			bf = new PrintWriter(new BufferedWriter(new FileWriter(f)));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
         while(true) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ex) {
                 System.out.println(ex.toString());
             }
+            
+            //debug
+            if(Configuration.DEBUG == 1) {  	
+                bf.write("#" + ant.moves + "# | Intensity: " + this.ant.intensity.toString() + " | " +  Main.world.getPatchInfo(this.ant.posx, this.ant.posy) + "\r\n");
+            }
+            
             if(ant.back) {
             	if(ant.checkObject(Mode.NEST) != null) {
             		ant.move(ant.checkObject(Mode.NEST));
@@ -47,6 +70,16 @@ public class Movement extends Thread {
             	pheromonMove();   
             	
             }
+            
+            while(Main.world.suspended) {
+            	ant.suspended = true;
+            	try {
+					Thread.sleep(1000L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+            }
+            
         }
     }
     

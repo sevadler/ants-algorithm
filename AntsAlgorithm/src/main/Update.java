@@ -1,9 +1,12 @@
 package main;
 
 import java.awt.Color;
+
+import main.ants.Ant;
 import main.datatype.IValue;
 import main.elements.Patch;
 import main.enums.Mode;
+import main.misc.Configuration;
 
 public class Update implements Runnable{
 	
@@ -74,10 +77,10 @@ public class Update implements Runnable{
                         	if(i1 < 0) {
                         		
                         		i1 = -i1;
-                       			pct_feed += 15 + 15 * i1/Integer.MAX_VALUE;
+                       			pct_feed += 15 + 15 * i1/310;
                        			
                        		} else {
-                       			pct_feed += 15 * i1/Integer.MAX_VALUE;	
+                       			pct_feed += 15 * i1/310;	
                        		}
                         	c = Color.getHSBColor(1.80F, 1.00F, (float)(pct_feed/100));
                         	pct_feed = 70;
@@ -89,10 +92,10 @@ public class Update implements Runnable{
                         	if(i2 < 0) {
                         		
                         		i2 = -i2;
-                       			pct_nest += 15 + 15 * i2/Integer.MAX_VALUE;
+                       			pct_nest += 15 + 15 * i2/310;
                        			
                        		} else {
-                       			pct_nest += 15 * i2/Integer.MAX_VALUE;	
+                       			pct_nest += 15 * i2/310;	
                        		}
                        		        	
                         	c = Color.getHSBColor(1.20F, 1.00F, (float)(pct_nest/100));
@@ -110,9 +113,9 @@ public class Update implements Runnable{
                     }
                     int rgb = c.getRGB();
                     Object data = Main.world.model.getDataElements(rgb, null);
-                    for(int i = 0; i < Main.world.patchSize; i++){
-                        for(int j = 0; j < Main.world.patchSize; j++){
-                            Main.world.raster.setDataElements(x * Main.world.patchSize + i, y * Main.world.patchSize + j, data);
+                    for(int i = 0; i < Configuration.PATCH_SIZE; i++){
+                        for(int j = 0; j < Configuration.PATCH_SIZE; j++){
+                            Main.world.raster.setDataElements(x * Configuration.PATCH_SIZE + i, y * Configuration.PATCH_SIZE + j, data);
                         }
                     }                             
                 }
@@ -121,6 +124,23 @@ public class Update implements Runnable{
             Main.world.add(Main.world.panel);
             Main.world.panel.repaint();
             Main.world.validate();
+            
+            while(Main.world.suspended) {
+            	boolean all = true;
+            	for(Ant a : Main.world.list) {
+            		if(!a.suspended) { 
+            			all = false;
+            		}
+            	}
+            	
+            	if(!all) { break; }
+            	
+            	try {
+					Thread.sleep(1000L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+            }
         }
     
         

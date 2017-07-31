@@ -16,6 +16,14 @@ public class Spawner implements Runnable {
             } catch (InterruptedException ex) {
                 Logger.getLogger(Spawner.class.getName()).log(Level.ALL, null, ex);
             }
+            
+            while(Main.world.suspended) {
+            	try {
+					Thread.sleep(1000L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+            }
         }
     }
     

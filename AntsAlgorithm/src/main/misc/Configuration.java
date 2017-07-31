@@ -18,6 +18,8 @@ public class Configuration {
 	public static String FEED;
 	
 	public static String WALLS;
+	public static int PATCH_SIZE;
+	public static int DEBUG;
 	
 	public static void init() {
 		
@@ -44,6 +46,8 @@ public class Configuration {
 				prop.setProperty("FEED", "80,80,82,82");
 				
 				prop.setProperty("WALLS", "");
+				prop.setProperty("PATCH_SIZE", "8");
+				prop.setProperty("DEBUG", "0");
 				
 				prop.store(output, null);
 				
@@ -76,6 +80,9 @@ public class Configuration {
 				Configuration.FEED = prop.getProperty("FEED");
 				
 				Configuration.WALLS = prop.getProperty("WALLS");
+				Configuration.PATCH_SIZE = Integer.parseInt(prop.getProperty("PATCH_SIZE"));
+				Configuration.DEBUG = Integer.parseInt(prop.getProperty("DEBUG"));
+				System.out.println(Configuration.DEBUG);
 				
 			} catch (IOException e) {
 				e.printStackTrace();

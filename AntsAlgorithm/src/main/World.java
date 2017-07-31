@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import main.ants.Ant;
+import main.ants.Movement;
 import main.elements.Feed;
 import main.elements.Nest;
 import main.elements.Patch;
@@ -25,14 +26,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class World extends JFrame {
     
 	private static final long serialVersionUID = 766277020594621205L;
 	private final int l;
     private final int h;
-    
-    public final int patchSize = 8;
     
     public Patch[][] field;
     
@@ -50,6 +51,7 @@ public class World extends JFrame {
     
     public boolean enabled = false;
     private boolean inst = false;
+    public boolean suspended = false;
     
     private int wx1;
     private int wy1;
@@ -60,8 +62,8 @@ public class World extends JFrame {
         
         this.h = h;
         this.l = l;
-        
-        img = new BufferedImage(l * patchSize, h * patchSize, BufferedImage.TYPE_INT_ARGB);
+                
+        img = new BufferedImage(l * Configuration.PATCH_SIZE, h * Configuration.PATCH_SIZE, BufferedImage.TYPE_INT_ARGB);
         raster = img.getRaster();
         model = img.getColorModel();
         Color c0 = Color.WHITE;
@@ -69,8 +71,8 @@ public class World extends JFrame {
         
         Object data0 = model.getDataElements(argb, null);
         
-        for (int i = 0; i < l * patchSize; i++) {
-        	for (int j = 0; j < h * patchSize; j++) {
+        for (int i = 0; i < l * Configuration.PATCH_SIZE; i++) {
+        	for (int j = 0; j < h * Configuration.PATCH_SIZE; j++) {
         		raster.setDataElements(i, j, data0);
             }
         }
@@ -95,6 +97,10 @@ public class World extends JFrame {
 					
 				} else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					System.exit(0);
+				} else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+					Main.world.suspended = !Main.world.suspended;
+				} else if(e.getKeyCode() == KeyEvent.VK_D) {
+					Movement.bf.close();
 				}
 				
 			}
@@ -114,23 +120,23 @@ public class World extends JFrame {
 
 				if(SwingUtilities.isLeftMouseButton(e)) {
 					
-					int x = e.getX() / patchSize;
-					int y = e.getY() / patchSize;
-					Patch p = field[x][y];
-					
-					System.out.println("Patch: X=" + x + " Y=" + y + " | NestIntensity=" + p.getNestIntensity().toString() + " | FeedIntensity=" + p.getFeedIntensity().toString() + " | Mode=" + p.getMode().toString());
+					int x = e.getX() / Configuration.PATCH_SIZE;
+					int y = e.getY() / Configuration.PATCH_SIZE;
+
+					System.out.println(Main.world.getPatchInfo(x, y));
 				}
 								
 				if(SwingUtilities.isRightMouseButton(e)) {
 					if(inst == false) {							
-						Main.world.wx1 = e.getX() / patchSize;
-						Main.world.wy1 = e.getY() / patchSize;
-						Main.world.field[Main.world.wx1][Main.world.wy1].setMarker();							inst = true;
+						Main.world.wx1 = e.getX() / Configuration.PATCH_SIZE;
+						Main.world.wy1 = e.getY() / Configuration.PATCH_SIZE;
+						Main.world.field[Main.world.wx1][Main.world.wy1].setMarker();							
+						inst = true;
 						
 					} else {
 						
-						Main.world.wx2 = e.getX() / patchSize;
-						Main.world.wy2 = e.getY() / patchSize;
+						Main.world.wx2 = e.getX() / Configuration.PATCH_SIZE;
+						Main.world.wy2 = e.getY() / Configuration.PATCH_SIZE;
 						Main.world.field[Main.world.wx2][Main.world.wy2].setMarker();
 						inst = false;
 						
@@ -162,9 +168,56 @@ public class World extends JFrame {
 			public void mouseReleased(MouseEvent arg0) { }
         	
         });
+        
+        this.addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+			
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				/*if(e.getSource() == this) {
+					Movement.bf.close();
+				}*/
+				
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        });
                  
         //Frame setting
-        getContentPane().setPreferredSize(new Dimension(l * patchSize,h * patchSize));
+        getContentPane().setPreferredSize(new Dimension(l * Configuration.PATCH_SIZE,h * Configuration.PATCH_SIZE));
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -285,7 +338,11 @@ public class World extends JFrame {
     	this.createFeed(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
     	
     }
-   
+    
+    public String getPatchInfo(int x, int y) {
+    	return "Patch: X=" + x + " Y=" + y + " | NestIntensity=" + field[x][y].getNestIntensity().toString() + " | FeedIntensity=" + field[x][y].getFeedIntensity().toString() + " | Mode=" + field[x][y].getMode().toString();
+    }
+       
     public void createNest(int x1, int y1){
         this.nest= new Nest(x1, y1, x1, y1);
     }
